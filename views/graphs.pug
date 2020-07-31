@@ -4,6 +4,28 @@ block content
   .page-header
     h3 All Graphs
 
-  ul
-    for graph in graphs
-      li= graph.name
+  
+  script(src='https://canvasjs.com/assets/script/canvasjs.min.js')
+  script(type='text/javascript').
+    window.onload = function () {
+    var chart = new CanvasJS.Chart("chartContainer", {
+    title:{
+    text: "BMI change over time"
+    },
+    data: [
+    {
+    // Change type to "doughnut", "line", "splineArea", etc.
+    type: "column",
+    dataPoints: [
+    { label: "June",  y: 18  },
+    { label: "July", y: 18.5  },
+    { label: "August", y: 19  },
+    { label: "September",  y: 20  },
+    { label: "October",  y: 21  }
+    ]
+    }
+    ]
+    });
+    chart.render();
+    }
+  #chartContainer(style='height: 300px; width: 100%;')
