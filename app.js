@@ -33,6 +33,8 @@ const homeController = require('./controllers/home');
 const userController = require('./controllers/user');
 const apiController = require('./controllers/api');
 const contactController = require('./controllers/contact');
+//added to test 
+const graphController = require('./controllers/graph');
 
 /**
  * API keys and Passport configuration.
@@ -265,3 +267,7 @@ app.listen(app.get('port'), () => {
 });
 
 module.exports = app;
+
+
+// making a new route for the graphs
+app.get('/graphs', graphController.getGraphs);

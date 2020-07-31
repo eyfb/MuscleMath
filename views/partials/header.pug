@@ -16,6 +16,9 @@
           a.nav-link(href='/contact') Contact
         li.nav-item(class=(title === 'Status') ? 'active' : undefined)
           a.nav-link(href='/status') Status
+        //Adding a new thing in the navigation bar
+        li.nav-item(class=(title === 'Graphs') ? 'active' : undefined)
+          a.nav-link(href='/graphs') Graphs
       ul.nav.navbar-nav.ml-auto
         if !user
           li.nav-item(class=(title === 'Login') ? 'active' : undefined)
