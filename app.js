@@ -35,6 +35,7 @@ const apiController = require('./controllers/api');
 const contactController = require('./controllers/contact');
 //added to test 
 const graphController = require('./controllers/graph');
+const inputController = require('./controllers/input');
 
 /**
  * API keys and Passport configuration.
@@ -271,3 +272,6 @@ module.exports = app;
 
 // making a new route for the graphs
 app.get('/graphs', graphController.getGraphs);
+
+// Input data page
+app.get('/input', inputController.getInput);  
