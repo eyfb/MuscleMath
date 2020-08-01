@@ -6,7 +6,7 @@ block content
     h3 Weight and Height Entry Form
 
     div
-      input#txtDate(type='text' placeholder='Enter the date (yyyy-mm-dd)')
+      input#txtDate(type='text' placeholder='Enter the date (yyyymmdd)')
     div
       input#txtWeight(type='text' placeholder='Enter your weight (kg)')
     div
@@ -21,12 +21,12 @@ block content
     const height = document.getElementById('txtHeight');
     // This variable stores all the data.
     let data =
-    'Date: ' + date.value + ' \n' +
-    'Weight: ' +weight.value + ' \n' +
-    'Height: ' + height.value + ' \n';
+    date.value + ',' +
+    weight.value + ',' +
+    height.value + ',\n';
     // Convert the text to BLOB.
     const textToBLOB = new Blob([data], { type: 'text/plain' });
-    const sFileName = 'formData.txt';	   // The file to save the data.
+    const sFileName = 'formData.csv';	   // The file to save the data.
     let newLink = document.createElement("a");
     newLink.download = sFileName;
     if (window.webkitURL != null) {
