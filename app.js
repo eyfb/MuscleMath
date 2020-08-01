@@ -36,6 +36,7 @@ const contactController = require('./controllers/contact');
 //added to test 
 const graphController = require('./controllers/graph');
 const inputController = require('./controllers/input');
+const weightController = require('./controllers/weight');
 
 /**
  * API keys and Passport configuration.
@@ -275,3 +276,13 @@ app.get('/graphs', graphController.getGraphs);
 
 // Input data page
 app.get('/input', inputController.callPython);  
+
+// Attempt at express routing for weight input 
+app.get('/weight', inputController.getWeights);
+
+/*app.route('/weight')
+  .get(weightController.getWeight)
+  .post(weightController.createWeight)
+  .put(weightController.updateWeight)
+  .delete(weightController.deleteWeight)
+  */
