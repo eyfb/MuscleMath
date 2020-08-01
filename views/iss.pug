@@ -3,6 +3,7 @@ extends layout
 block content
     doctype html
     head
+     title Fetch JSON from API 
     link(rel='stylesheet' href='https://unpkg.com/leaflet@1.6.0/dist/leaflet.css' integrity='sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==' crossorigin='')
     script(src='https://unpkg.com/leaflet@1.6.0/dist/leaflet.js' integrity='sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==' crossorigin='')
     style.
@@ -10,7 +11,6 @@ block content
      height: 200px;
      }
 
-    title  Fetch JSON from API 
     h1  Where is the ISS? 
     p
      | Latitude: 
@@ -59,4 +59,24 @@ block content
      }
      getISS();
      setInterval(getISS, 1000); //Loop: could use websockets for updating
+
+
+
+     //Read CSV data from file
+     async function getCSV() {
+         const response = await fetch("test.csv");
+         const data = await response.text();
+         console.log(data);
+
+         const rows = data.split('\n').slice(1);
+         rows.forEach(input => {
+            const row = input.split(',');
+            const id = row[0];
+            const weight = row[3];
+            const height = row[4];
+            const bmi = row[5];
+            console.log(id, weight, height, bmi);
+         });
+     }
+     getCSV();
 
