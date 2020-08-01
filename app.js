@@ -278,7 +278,7 @@ app.get('/graphs', graphController.getGraphs);
 app.get('/input', inputController.callPython);  
 
 // Attempt at express routing for weight input 
-app.get('/weight', inputController.getWeights);
+app.get('/weights', weightController.getWeights);
 
 /*app.route('/weight')
   .get(weightController.getWeight)
