@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
-const { Double } = require('mongodb');
 
 const weightSchema = new mongoose.Schema({
-  pounds: Double 
+  name: String 
 });
 
 const Weight = mongoose.model('Weight', weightSchema);
