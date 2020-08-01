@@ -4,7 +4,7 @@
  */
 const Weight = require('../models/Weight.js');
 
-exports.getWeight = (req, res) => {
+exports.getWeights = (req, res) => {
   Weight.find((err, docs) => {
     res.render('weights', { weights: docs });
   });
