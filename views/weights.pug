@@ -1,10 +1,49 @@
 extends layout
 
-block content
-  .page-header
-    h3 All Weights
 
-  ul
-    for weight in weights
-      li= weight.pounds
+block content
+  .pb-2.mt-2.mb-4.border-bottom
+    h3 Weight and Height Entry Form
+
+    div
+      input#txtDate(type='text' placeholder='Enter the date (yyyy-mm-dd)')
+    div
+      input#txtWeight(type='text' placeholder='Enter your weight (kg)')
+    div
+      input#txtHeight(type='text' placeholder='Enter your height (meters)')
+    div
+      input#bt(type='button' value='Save data to file' onclick='saveFile()')
+  script.
+    let saveFile = () => {
+    // Get the data from each element on the form.
+    const date = document.getElementById('txtDate');
+    const weight = document.getElementById('txtWeight');
+    const height = document.getElementById('txtHeight');
+    // This variable stores all the data.
+    let data =
+    'Date: ' + date.value + ' \n' +
+    'Weight: ' +weight.value + ' \n' +
+    'Height: ' + height.value + ' \n';
+    // Convert the text to BLOB.
+    const textToBLOB = new Blob([data], { type: 'text/plain' });
+    const sFileName = 'formData.txt';	   // The file to save the data.
+    let newLink = document.createElement("a");
+    newLink.download = sFileName;
+    if (window.webkitURL != null) {
+    newLink.href = window.webkitURL.createObjectURL(textToBLOB);
+    }
+    else {
+    newLink.href = window.URL.createObjectURL(textToBLOB);
+    newLink.style.display = "none";
+    document.body.appendChild(newLink);
+    }
+    newLink.click();
+    }
+
+
+
+
+
+
+
 
