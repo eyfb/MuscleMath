@@ -1,5 +1,6 @@
 // googleSheetsService.js
-// GoogleSheetsService has full access to a spread sheet
+// GoogleSheetsService has full access to a spread sheet. 
+// To run, in the command line type <node GoogleSheetsService.js>.
 
 const { google } = require('googleapis');
 const key = require('./GoogleSheetServiceCredentials.json');
