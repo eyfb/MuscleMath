@@ -274,4 +274,4 @@ module.exports = app;
 app.get('/graphs', graphController.getGraphs);
 
 // Input data page
-app.get('/input', inputController.getInput);  
+app.get('/input', inputController.callPython);  
