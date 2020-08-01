@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const weightSchema = new mongoose.Schema({
-  name: String 
+  pounds: Number 
 });
 
 const Weight = mongoose.model('Weight', weightSchema);
