@@ -1,7 +1,5 @@
 extends layout
 
-//- This file is kind of unused right now
-
 block content
   .page-header
     h3 Chart.js
@@ -9,9 +7,7 @@ block content
   canvas#myChart
   script(src='https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js')
   script.
-    const x_labels = [];
-    const weights = [];
-    
+  
     makeChart();
     async function makeChart() {
       const data = await getCSV(); //get CSV data first
@@ -21,35 +17,58 @@ block content
       type: 'line',
       // The data for our dataset
       data: {
-      labels: data.x_vals,
-      datasets: [{
-      label: 'Weight',
-      backgroundColor: 'rgb(255, 99, 132)',
-      borderColor: 'rgb(255, 99, 132)',
-      data: data.y_vals
-      }]
+        labels: data.x_vals,
+        datasets: [{
+          label: 'Weight',
+          backgroundColor: 'rgb(255, 99, 132)',
+          borderColor: 'rgb(255, 99, 132)',
+          data: data.y_weights
+        }]
       },
+
       //Config options
       options: {
+        legend: {
+          display: true,
+          label: {
+            fontColor: 'rgb(0, 0, 255)'
+          }
+        },
         scales: {
             yAxes: [{
+                scaleLabel: {
+                  display: true,
+                  labelString: 'Weight'
+                },
                 ticks: {
                     callback: function(value, index, values) {
                         return value + ' kg';
                     }
                 }
+            }],
+            xAxes: [{
+              scaleLabel: {
+                display: true,
+                labelString: 'Date'
+              },
+              ticks: {
+                major: {
+                  fontStyle: 'bold',
+                  fontColor: '#FF0000'
+                }
+              }
             }]
         }
       }
-
       });
     }
 
     //Read CSV data from file
     async function getCSV() {
         const x_vals = [];
-        const y_vals = [];
-        const response = await fetch("test.csv");
+        const y_weights = [];
+        const y_heights = [];
+        const response = await fetch("/test_csvs/test.csv"); //'root' (/) is public folder
         const data = await response.text();
         console.log(data);
 
@@ -61,10 +80,11 @@ block content
           const height = row[4];
           const bmi = row[5];
           x_vals.push(id); //For graph
-          y_vals.push(weight);
+          y_weights.push(weight);
+          y_heights.push(height);
           console.log(id, weight, height, bmi); //can treat id as 'date' on x-axis for now
         });
-        return {x_vals, y_vals};
+        return {x_vals, y_weights, y_heights};
     }
 
   //- canvas#myChart(width='400' height='400')
