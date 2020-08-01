@@ -7,25 +7,49 @@ block content
     h3 Chart.js
 
   canvas#myChart
-  script(src='https://cdn.jsdelivr.net/npm/chart.js@2.8.0')
+  script(src='https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js')
   script.
-    var ctx = document.getElementById('myChart').getContext('2d');
-    var chart = new Chart(ctx, {
-    // The type of chart we want to create
-    type: 'line',
-    // The data for our dataset
-    data: {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    datasets: [{
-    label: 'My First dataset',
-    backgroundColor: 'rgb(255, 99, 132)',
-    borderColor: 'rgb(255, 99, 132)',
-    data: [0, 10, 5, 2, 20, 30, 45]
-    }]
-    },
-    // Configuration options go here
-    options: {}
-    });
+    const x_labels = [];
+    
+    makeChart();
+    async function makeChart() {
+      await getCSV(); //get CSV data first
+      var ctx = document.getElementById('myChart').getContext('2d');
+      var chart = new Chart(ctx, {
+      // The type of chart we want to create
+      type: 'line',
+      // The data for our dataset
+      data: {
+      labels: x_labels,
+      datasets: [{
+      label: 'My First dataset',
+      backgroundColor: 'rgb(255, 99, 132)',
+      borderColor: 'rgb(255, 99, 132)',
+      data: [0, 10, 5, 2, 20, 30, 45]
+      }]
+      },
+      // Configuration options go here
+      options: {}
+      });
+    }
+
+    //Read CSV data from file
+    async function getCSV() {
+        const response = await fetch("test.csv");
+        const data = await response.text();
+        console.log(data);
+
+        const rows = data.split('\n').slice(1);
+        rows.forEach(input => {
+          const row = input.split(',');
+          const id = row[0];
+          const weight = row[3];
+          const height = row[4];
+          const bmi = row[5];
+          x_labels.push(id); //For graph
+          console.log(id, weight, height, bmi); //can treat id as 'date' on x-axis for now
+        });
+    }
 
   //- canvas#myChart(width='400' height='400')
   //- //-'./node_modules/chart.js'

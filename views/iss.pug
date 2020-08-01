@@ -60,23 +60,3 @@ block content
      getISS();
      setInterval(getISS, 1000); //Loop: could use websockets for updating
 
-
-
-     //Read CSV data from file
-     async function getCSV() {
-         const response = await fetch("test.csv");
-         const data = await response.text();
-         console.log(data);
-
-         const rows = data.split('\n').slice(1);
-         rows.forEach(input => {
-            const row = input.split(',');
-            const id = row[0];
-            const weight = row[3];
-            const height = row[4];
-            const bmi = row[5];
-            console.log(id, weight, height, bmi);
-         });
-     }
-     getCSV();
-
