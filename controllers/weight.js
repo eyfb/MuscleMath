@@ -1,6 +1,6 @@
 /**
- * GET /weight
- * List all weight.
+ * GET /weights
+ * List all weights.
  */
 const Weight = require('../models/Weight.js');
 
