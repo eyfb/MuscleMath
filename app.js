@@ -37,6 +37,7 @@ const contactController = require('./controllers/contact');
 const graphController = require('./controllers/graph');
 const inputController = require('./controllers/input');
 const issController = require('./controllers/iss');
+const more_graphsController = require('./controllers/more_graphs');
 const weightController = require('./controllers/weight');
 
 /**
@@ -278,6 +279,7 @@ app.get('/graphs', graphController.getGraphs);
 // Input data page
 app.get('/input', inputController.callPython);  
 app.get('/iss', issController.getISS);
+app.get('/more_graphs', more_graphsController.getGraphs);
 
 // Attempt at express routing for weight input 
 app.get('/weights', weightController.getWeights);
