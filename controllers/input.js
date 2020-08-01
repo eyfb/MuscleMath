@@ -17,8 +17,8 @@ exports.getInput = (req, res) => {
 //Launches a python script
 exports.callPython = (req, res) => {
     var exec = require('child_process');
-
-    res.render('input', {});
+    
+    res.render('input', {}); //testing 
     var process = exec.spawn('python',["./python/hello.py", 'first', 'last']);
                             // req.query.firstname, 
                             // req.query.lastname] ); 

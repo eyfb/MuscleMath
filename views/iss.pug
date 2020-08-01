@@ -1,0 +1,62 @@
+extends layout
+
+block content
+    doctype html
+    head
+    link(rel='stylesheet' href='https://unpkg.com/leaflet@1.6.0/dist/leaflet.css' integrity='sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==' crossorigin='')
+    script(src='https://unpkg.com/leaflet@1.6.0/dist/leaflet.js' integrity='sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==' crossorigin='')
+    style.
+     #issMap {
+     height: 200px;
+     }
+
+    title  Fetch JSON from API 
+    h1  Where is the ISS? 
+    p
+     | Latitude: 
+     span#lat
+     |  deg
+     br
+     | Longitude: 
+     span#lon
+     |  deg
+     br
+     | Altitude: 
+     span#alt 
+     |  m
+     br
+     | Velocity: 
+     span#vel 
+     |  km/h
+
+    #issMap
+
+    script.
+     const api_url = 'https://api.wheretheiss.at/v1/satellites/25544';
+    
+     //Get map
+     var mymap = L.map('issMap').setView([0, 0], 1);
+     const attribution = '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>'
+     const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+     const tiles = L.tileLayer(tileUrl, {attribution});
+     tiles.addTo(mymap);
+
+     const marker = L.marker([0, 0]).addTo(mymap); //Represent current location
+
+     //Grab ISS information   
+     async function getISS() {
+        const response = await fetch(api_url);
+        const data = await response.json();
+        const {latitude, longitude, altitude, velocity} = data;
+        document.getElementById('lat').textContent = latitude.toFixed(4);
+        document.getElementById('lon').textContent = longitude.toFixed(4);
+        document.getElementById('alt').textContent = altitude.toFixed(4);
+        document.getElementById('vel').textContent = velocity.toFixed(2);
+
+        marker.setLatLng([latitude, longitude]);
+
+        console.log(data);
+     }
+     getISS();
+     setInterval(getISS, 1000); //Loop: could use websockets for updating
+
