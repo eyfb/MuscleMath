@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { Double } = require('mongodb');
 
 const weightSchema = new mongoose.Schema({
   pounds: Double
