@@ -3,15 +3,17 @@ extends layout
 block content
   .page-header
     h3 Chart.js
+    button#addData Add Data
 
-  canvas#myChart
+  canvas#csvChart
+  canvas#dynamicChart
   script(src='https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js')
   script.
-  
+
     makeChart();
     async function makeChart() {
       const data = await getCSV(); //get CSV data first
-      var ctx = document.getElementById('myChart').getContext('2d');
+      var ctx = document.getElementById('csvChart').getContext('2d');
       var chart = new Chart(ctx, {
       // The type of chart we want to create
       type: 'line',
@@ -68,7 +70,7 @@ block content
         const x_vals = [];
         const y_weights = [];
         const y_heights = [];
-        const response = await fetch("/test_csvs/test.csv"); //'root' (/) is public folder
+        const response = await fetch("/test_csvs/test2.csv"); //'root' (/) is public folder
         const data = await response.text();
         console.log(data);
 
@@ -76,23 +78,114 @@ block content
         rows.forEach(input => {
           const row = input.split(',');
           const id = row[0];
-          const weight = row[3];
-          const height = row[4];
-          const bmi = row[5];
-          x_vals.push(id); //For graph
+          const date = row[1];
+          const weight = row[2];
+          const height = row[3];
+          const bmi = row[4];
+          x_vals.push(date); //For graph
           y_weights.push(weight);
           y_heights.push(height);
-          console.log(id, weight, height, bmi); //can treat id as 'date' on x-axis for now
+          console.log(date, weight, height, bmi); //can treat id as 'date' on x-axis for now
         });
         return {x_vals, y_weights, y_heights};
     }
 
-  //- canvas#myChart(width='400' height='400')
+    //Dynamic chart - i.e. can push data to it. No persistence on reload - no CSV.
+    var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    var config = {
+        type: 'line',
+        data: {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            datasets: [{
+                label: 'My First dataset',
+                backgroundColor: window.chartColors.red,
+                borderColor: window.chartColors.red,
+                data: [
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor()
+                ],
+                fill: false,
+            }, {
+                label: 'My Second dataset',
+                fill: false,
+                backgroundColor: window.chartColors.blue,
+                borderColor: window.chartColors.blue,
+                data: [
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor(),
+                    randomScalingFactor()
+                ],
+            }]
+        },
+        options: {
+            responsive: true,
+            title: {
+                display: true,
+                text: 'Chart.js Line Chart'
+            },
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Month'
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Value'
+                    }
+                }]
+            }
+        }
+    };
+
+    //- window.onload = function() {
+    makeDynChart();
+    function makeDynChart() {
+        var ctx = document.getElementById('dynamicChart').getContext('2d');
+        window.myLine = new Chart(ctx, config);
+    };
+
+    document.getElementById('addData').addEventListener('click', function() {
+        if (config.data.datasets.length > 0) {
+            var month = MONTHS[config.data.labels.length % MONTHS.length];
+            config.data.labels.push(month);
+
+            config.data.datasets.forEach(function(dataset) {
+                dataset.data.push(randomScalingFactor());
+            });
+
+            window.myLine.update();
+        }
+    });
+
+
+  //- canvas#csvChart(width='400' height='400')
   //- //-'./node_modules/chart.js'
   //- script(type='text/javascript', src='https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js').
   //-   //- var Chart = require('chart.js');
-  //-   var ctx = document.getElementById('myChart').getContext('2d');
-  //-   var myChart = new Chart(ctx, {
+  //-   var ctx = document.getElementById('csvChart').getContext('2d');
+  //-   var csvChart = new Chart(ctx, {
   //-   type: 'bar',
   //-   data: {
   //-   labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],

@@ -278,6 +278,7 @@ app.get('/graphs', graphController.getGraphs);
 
 // Input data page
 app.get('/input', inputController.callPython);  
+app.post('/input', inputController.postHealth);
 app.get('/iss', issController.getISS);
 app.get('/more_graphs', more_graphsController.getGraphs);
 
