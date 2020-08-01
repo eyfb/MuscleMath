@@ -9,60 +9,64 @@ block content
   canvas#dynamicChart
   script(src='https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js')
   script.
+    //Globals
+    var config_csv = {};
 
     makeChart();
     async function makeChart() {
       const data = await getCSV(); //get CSV data first
-      var ctx = document.getElementById('csvChart').getContext('2d');
-      var chart = new Chart(ctx, {
-      // The type of chart we want to create
-      type: 'line',
-      // The data for our dataset
-      data: {
-        labels: data.x_vals,
-        datasets: [{
-          label: 'Weight',
-          backgroundColor: 'rgb(255, 99, 132)',
-          borderColor: 'rgb(255, 99, 132)',
-          data: data.y_weights
-        }]
-      },
-
-      //Config options
-      options: {
-        legend: {
-          display: true,
-          label: {
-            fontColor: 'rgb(0, 0, 255)'
-          }
+      var ctx2 = document.getElementById('csvChart').getContext('2d');
+      config_csv = {
+        // The type of chart we want to create
+        type: 'line',
+        // The data for our dataset
+        data: {
+          labels: data.x_vals,
+          datasets: [{
+            label: 'Weight',
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
+            data: data.y_weights
+          }]
         },
-        scales: {
-            yAxes: [{
+
+        //Config options
+        options: {
+          legend: {
+            display: true,
+            label: {
+              fontColor: 'rgb(0, 0, 255)'
+            }
+          },
+          scales: {
+              yAxes: [{
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'Weight'
+                  },
+                  ticks: {
+                      callback: function(value, index, values) {
+                          return value + ' kg';
+                      }
+                  }
+              }],
+              xAxes: [{
                 scaleLabel: {
                   display: true,
-                  labelString: 'Weight'
+                  labelString: 'Date'
                 },
                 ticks: {
-                    callback: function(value, index, values) {
-                        return value + ' kg';
-                    }
+                  major: {
+                    fontStyle: 'bold',
+                    fontColor: '#FF0000'
+                  }
                 }
-            }],
-            xAxes: [{
-              scaleLabel: {
-                display: true,
-                labelString: 'Date'
-              },
-              ticks: {
-                major: {
-                  fontStyle: 'bold',
-                  fontColor: '#FF0000'
-                }
-              }
-            }]
+              }]
+          }
         }
-      }
-      });
+      };
+      var chart = new Chart(ctx2, config_csv);
+      
     }
 
     //Read CSV data from file
@@ -96,36 +100,15 @@ block content
         type: 'line',
         data: {
             labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
             datasets: [{
                 label: 'My First dataset',
-                backgroundColor: window.chartColors.red,
-                borderColor: window.chartColors.red,
                 data: [
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor()
+                    1, 2, 3, 5, 2, 8, 1
                 ],
                 fill: false,
-            }, {
-                label: 'My Second dataset',
-                fill: false,
-                backgroundColor: window.chartColors.blue,
-                borderColor: window.chartColors.blue,
-                data: [
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor()
-                ],
-            }]
-        },
+            }],
         options: {
             responsive: true,
             title: {
@@ -156,14 +139,18 @@ block content
                     }
                 }]
             }
+          }
         }
     };
+    //- dynChart();
+    //- function dynChart() {
+    //-     var ctx = document.getElementById('dynamicChart').getContext('2d');
+    //-     var chart2 = new Chart(ctx, config);
+    //- }
 
-    //- window.onload = function() {
-    makeDynChart();
-    function makeDynChart() {
-        var ctx = document.getElementById('dynamicChart').getContext('2d');
-        window.myLine = new Chart(ctx, config);
+    window.onload = function() {
+     var ctx = document.getElementById('dynamicChart').getContext('2d');
+     window.myLine = new Chart(ctx, config);
     };
 
     document.getElementById('addData').addEventListener('click', function() {
@@ -172,7 +159,7 @@ block content
             config.data.labels.push(month);
 
             config.data.datasets.forEach(function(dataset) {
-                dataset.data.push(randomScalingFactor());
+                dataset.data.push(1);
             });
 
             window.myLine.update();

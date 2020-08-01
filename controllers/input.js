@@ -62,11 +62,11 @@ exports.postHealth = (req, res) => {
     var csvWriter = require('csv-write-stream');
 
     //Note: this currently just overwrites the existing csv data..
-    // var writer = csvWriter();
-    // writer.pipe(fs.createWriteStream('./public/test_csvs/test2.csv'));
-    // // writer.write({id: "world", date: "bar", weight: "taco", height: "", bmi: fromWeight/fromHeight});
-    // writer.write({id: '0', date: date, weight: fromWeight, height: fromHeight, bmi: fromWeight/fromHeight});
-    // writer.end(); 
+    var writer = csvWriter();
+    writer.pipe(fs.createWriteStream('./public/test_csvs/test2.csv'));
+    // writer.write({id: "world", date: "bar", weight: "taco", height: "", bmi: fromWeight/fromHeight});
+    writer.write({id: '0', date: date, weight: fromWeight, height: fromHeight, bmi: fromWeight/fromHeight});
+    writer.end(); 
 
 
     req.flash('success', {msg: 'Health data logged! Here are your results.'});
