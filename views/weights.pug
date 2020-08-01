@@ -91,16 +91,7 @@ block content
     h4
       | Values in Google Sheets
 
-  - if (values.length)
-    table(style='width:100%', border='1')
-      tr
-        -for (var i = 0; i < values.length; i++)
-          tr
-          -for (var j = 0; j < values[i].length; j++)
-            - if (i == 0)
-              td(style='font-weight:bold')= values[i][j]
-            - else
-              td= values[i][j]
+
 
     
 
