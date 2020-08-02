@@ -3,9 +3,31 @@ extends layout
 block content
   .page-header
     h3 Your Health
-    button#addData Add Manual BMI 
-    div
-      input#inputBMI(type='text' placeholder='Log your own BMI')
+
+    head  
+      style.
+        inputDiv {
+          text-align: center;
+        }
+    .inputDiv
+      input#inputBMI(type='text' placeholder='Log your own BMI') 
+      button#addData Add Manual BMI 
+    
+    //- button#calcBMILocal Update BMI Chart
+
+    //- was for new getCSV with d3
+    //- meta(charset='utf-8')
+    //- style.
+    //-   table {
+    //-   border-collapse: collapse;
+    //-   border: 2px black solid;
+    //-   font: 12px sans-serif;
+    //-   }
+    //-   td {
+    //-   border: 1px black solid;
+    //-   padding: 5px;
+    //-   }
+
 
   canvas#csvChart
 
@@ -50,7 +72,7 @@ block content
           responsive: true,
           title: {
               display: true,
-              text: 'How does my weight change?'
+              text: 'How has my weight fluctuated?'
           },
           tooltips: {
               mode: 'index',
@@ -125,9 +147,19 @@ block content
         const y_heights = [];
         console.log('Should be reading csv');
 
-
-        const response = await fetch("/test_csvs/test2.csv"); //'root' (/) is public folder
+        //was ./test_csvs/test2.csv or no .
+        //no-cache prevents chrome from not loading the updated csv file!!!!
+        const response = await fetch("/test_csvs/test2.csv", {cache: "no-cache"}); //'root' (/) is public folder
         const data = await response.text();
+        //- var data;
+        //- await fetch("/test_csvs/test2.csv")
+        //- .then((response) => {
+        //-     data = response.text();
+        //- })
+        //- .catch((err) => {
+        //-   console.log(err);
+        //- });
+
         console.log('Should be done reading.');
         console.log(data);
 
@@ -152,6 +184,21 @@ block content
         return {x_vals, y_weights, y_heights};
     }
 
+
+    //Get CSV - without using fetch()
+    //- function getCSVAlt() {
+    //-   const csv = require('csv-parser');
+    //-   const fs = require('fs');
+    //-   fs.createReadStream('./public/test_csvs/test2.csv')
+    //-     .pipe(csv())
+    //-     .on('data', (row) => {
+    //-       console.log(row);
+    //-     })
+    //-     .on('end', () => {
+    //-       console.log('CSV file processing finished');
+    //-     })
+    //- }
+
     //----------------------------------------------------------------------------------------
 
     //Chart 2: Dynamic chart - i.e. can push data to it. No persistence on reload - no CSV.
@@ -171,7 +218,7 @@ block content
             responsive: true,
             title: {
                 display: true,
-                text: 'How does my BMI change?'
+                text: 'How has my BMI fluctuated?'
             },
             tooltips: {
                 mode: 'index',
@@ -205,10 +252,8 @@ block content
       var ctx = document.getElementById('dynamicChart').getContext('2d');
       window.myLine = new Chart(ctx, config_bmi);
     };
-
-    //Handle adding new data to Dynamic chart
-    document.getElementById('addData').addEventListener('click', addToDyn);
     
+    //Add a single value to the dynamic chart (manual BMI entry)
     function addToDyn() {
         //For every dataset on the Dynamic chart
         if (config_bmi.data.datasets.length > 0) {
@@ -226,6 +271,19 @@ block content
             window.myLine.update();
         }
     }
+
+    //Diagnostic
+    //- document.getElementById('calcBMILocal').addEventListener('click', function() {
+    //-     csvToDynamic()
+    //-       .then(() => {console.log('success');})
+    //-       .catch((err) => {
+    //-         console.log(err);
+    //-       });
+    //-   }
+    //- );
+
+    //Handle adding new data to Dynamic chart
+    document.getElementById('addData').addEventListener('click', addToDyn);
 
     //add 1 element to dynamic chart - using data from csv
     //- function addToDynMod(data, xval) {
@@ -245,12 +303,7 @@ block content
     //-   }
     //- }
 
-
-    csvToDynamic()
-    .then(() => {console.log('success');})
-    .catch((err) => {
-      console.log(err);
-    });
+    //This is more like a post? (post request to server database - csv file)
 
     //Push csv data to the dynamic chart, for experimenting.
     async function csvToDynamic() {
@@ -280,6 +333,33 @@ block content
       //-   addToDynMod(data, xval);
       //- });
     }
+
+    csvToDynamic()
+    .then(() => {console.log('success');})
+    .catch((err) => {
+      console.log(err);
+    });
+  
+  //- div
+  //-   input#inputBMI(type='text' placeholder='Log your own BMI') 
+  //-   button#addData Add Manual BMI 
+  
+  //-Attempt to getCSV data using d3...
+  //- script(src='d3.min.js?v=3.2.8').
+  //- script.
+  //-   d3.text("/test_csvs/test2.csv", function(data) {
+  //-     var parsedCSV = d3.csv.parseRows(data);
+  //-     var container = d3.select("body")
+  //-     .append("table")
+  //-     .selectAll("tr")
+  //-     .data(parsedCSV).enter()
+  //-     .append("tr")
+  //-     .selectAll("td")
+  //-     .data(function(d) { return d; }).enter()
+  //-     .append("td")
+  //-     .text(function(d) { return d; });
+  //-   });
+      
 
 
   //- canvas#csvChart(width='400' height='400')

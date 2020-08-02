@@ -1,15 +1,21 @@
 const validator = require('validator');
 const Book = require('../models/Input.js');
+const fs = require('fs');
+const csvWriter = require('csv-write-stream');
 
 /**
  * GET /inputs
  * Get input from user
  */
+// exports.getInput = (req, res) => {
+//   Book.find((err, docs) => {
+//     res.render('input', { books: docs }); //first arg is the .pug file in views
+//   });
+// };
+
 exports.getInput = (req, res) => {
-  Book.find((err, docs) => {
-    res.render('input', { books: docs }); //first arg is the .pug file in views
-  });
-};
+    res.render('input', {});
+}
 
 //Launches a python script
 exports.callPython = (req, res) => {
@@ -70,10 +76,9 @@ async function postHealth(req, res) {
 
 module.exports.postHealth = postHealth;
 
+//Write to CSV using height, weight and date
 async function appendCSV(fromHeight, fromWeight, date) {
     //Append to csv in /public/test_csvs/test2.csv
-    var fs = require('fs');
-    var csvWriter = require('csv-write-stream');
 
     //Note: this currently just overwrites the existing csv data..
     var writer = csvWriter({sendHeaders: false});
@@ -85,4 +90,3 @@ async function appendCSV(fromHeight, fromWeight, date) {
     writer.end(); 
     return;
 }
-  
