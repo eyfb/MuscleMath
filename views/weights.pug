@@ -42,7 +42,7 @@ block content
   h3
      | Recent Weight Data
      | ~ August ~ 
-
+  p#demo
     
   table(style='width:100%', border='1')
     tr  
@@ -50,7 +50,7 @@ block content
       th Weight
     tr
       th 01/08/20
-      th 10
+      th 
     tr
       th 02/08/20
       th 20
@@ -84,5 +84,54 @@ block content
   .pb-2.mt-2.mb-4.border-bottom
     h4
       | 
+
+  
+  script.
+    const { google } = require("googleapis");
+    const keys = require("./GoogleSheetsServiceCredentials.json");
+    var receivedData = [][];
+
+    const client = new google.auth.JWT(keys.client_email, null, keys.private_key, [
+      "https://www.googleapis.com/auth/spreadsheets"
+    ]);
+
+    const gsrun = async cl => {
+    const gsapi = google.sheets({ version: "v4", auth: cl });
+
+      const opt = {
+        spreadsheetId: "10jqx9YYm9hquoHYBwfIwvtpRSNnHPWzEQfyk4o_Df9Y",
+        range: "Sheet1!A2:B5"
+      };
+
+      const data = await gsapi.spreadsheets.values.get(opt);
+      const dataArray = data.data.values;
+
+      return dataArray;
+    };
+
+    // main async IIFE
+    (async () => {
+      client.authorize(function(err, tokens) {
+        if (err) {
+          console.log(err);
+          return;
+        }
+    2
+        console.log("Connected");
+      });
+
+      receivedData = await gsrun(client);
+      console.log(receivedData.length);
+    
+    })
+    ();
+ 
+    var len = receivedData.length;
+      // you can use receivedData here later:
+      console.log(receivedData);
+      document.getElementById("demo").innerHTML = len;
+
+
+  
 
 
