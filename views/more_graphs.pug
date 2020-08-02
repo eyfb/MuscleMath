@@ -6,13 +6,14 @@ block content
     button#addData Add Data
 
   canvas#csvChart
+
   canvas#dynamicChart
   script(src='https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js')
   script.
     //Globals
     var config_csv = {};
 
-    makeChart();
+    makeChart(); // Chart 1: Uses data from a CSV
     async function makeChart() {
       const data = await getCSV(); //get CSV data first
       var ctx2 = document.getElementById('csvChart').getContext('2d');
@@ -24,14 +25,38 @@ block content
           labels: data.x_vals,
           datasets: [{
             label: 'Weight',
+            yAxisID: 'Weight',
             backgroundColor: 'rgb(255, 99, 132)',
             borderColor: 'rgb(255, 99, 132)',
-            data: data.y_weights
+            data: data.y_weights,
+            fill: false
+          
+          //- },
+          //- {
+          //-   label: 'Height',
+          //-   yAxisID: 'Height',
+          //-   backgroundColor: 'rgb(255, 0, 25)',
+          //-   borderColor: 'rgb(255, 0, 25)',
+          //-   data: data.y_heights,
+          //-   fill: false
           }]
         },
 
         //Config options
         options: {
+          responsive: true,
+          title: {
+              display: true,
+              text: 'How does my weight change?'
+          },
+          tooltips: {
+              mode: 'index',
+              intersect: false,
+          },
+          hover: {
+              mode: 'nearest',
+              intersect: true
+          },
           legend: {
             display: true,
             label: {
@@ -40,20 +65,35 @@ block content
           },
           scales: {
               yAxes: [{
+                  id: 'Weight',
+                  position: 'left',
                   scaleLabel: {
                     display: true,
-                    labelString: 'Weight'
+                    labelString: 'Weight (kg)'
                   },
                   ticks: {
                       callback: function(value, index, values) {
                           return value + ' kg';
                       }
                   }
+              
+              //- }, {
+              //-     id: 'Height',
+              //-     position: 'Right',
+              //-     scaleLabel: {
+              //-       display: true,
+              //-       labelString: 'Height (cm)'
+              //-     },
+              //-     ticks: {
+              //-         callback: function(value, index, values) {
+              //-             return value + ' cm';
+              //-         }
+              //-     }
               }],
               xAxes: [{
                 scaleLabel: {
                   display: true,
-                  labelString: 'Date'
+                  labelString: 'Date (yyyy-mm-dd)'
                 },
                 ticks: {
                   major: {
@@ -74,7 +114,7 @@ block content
         const x_vals = [];
         const y_weights = [];
         const y_heights = [];
-        const response = await fetch("/test_csvs/test2.csv"); //'root' (/) is public folder
+        const response = await fetch("/test_csvs/base.csv"); //'root' (/) is public folder
         const data = await response.text();
         console.log(data);
 
@@ -86,34 +126,37 @@ block content
           const weight = row[2];
           const height = row[3];
           const bmi = row[4];
-          x_vals.push(date); //For graph
-          y_weights.push(weight);
-          y_heights.push(height);
-          console.log(date, weight, height, bmi); //can treat id as 'date' on x-axis for now
+          if (date != undefined && weight != undefined && height != undefined) {
+             x_vals.push(date); //For graph
+            y_weights.push(weight);
+            y_heights.push(height);
+            console.log(date, weight, height, bmi); //can treat id as 'date' on x-axis for now
+          } else {
+            console.log('undefined values in csv');
+          }
+         
         });
         return {x_vals, y_weights, y_heights};
     }
 
-    //Dynamic chart - i.e. can push data to it. No persistence on reload - no CSV.
-    var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    var config = {
+    //Chart 2: Dynamic chart - i.e. can push data to it. No persistence on reload - no CSV.
+    var config_bmi = {
         type: 'line',
         data: {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-            backgroundColor: 'rgb(255, 99, 132)',
-            borderColor: 'rgb(255, 99, 132)',
-            datasets: [{
-                label: 'My First dataset',
-                data: [
-                    1, 2, 3, 5, 2, 8, 1
-                ],
-                fill: false,
-            }],
+          labels: [],
+          datasets: [{
+              label: 'BMI',
+              backgroundColor: 'rgb(0, 99, 132)',
+              borderColor: 'rgb(0, 99, 132)',
+              data: [],
+              fill: false,
+          }]
+        },
         options: {
             responsive: true,
             title: {
                 display: true,
-                text: 'Chart.js Line Chart'
+                text: 'How does my BMI change?'
             },
             tooltips: {
                 mode: 'index',
@@ -124,44 +167,45 @@ block content
                 intersect: true
             },
             scales: {
+              yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'BMI (kg/m2)'
+                    }
+                }],
                 xAxes: [{
                     display: true,
                     scaleLabel: {
                         display: true,
-                        labelString: 'Month'
-                    }
-                }],
-                yAxes: [{
-                    display: true,
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'Value'
+                        labelString: 'Date (yyyy-mm-dd)'
                     }
                 }]
-            }
           }
         }
     };
-    //- dynChart();
-    //- function dynChart() {
-    //-     var ctx = document.getElementById('dynamicChart').getContext('2d');
-    //-     var chart2 = new Chart(ctx, config);
-    //- }
 
+    //Handle loading data for Dynamic chart
     window.onload = function() {
-     var ctx = document.getElementById('dynamicChart').getContext('2d');
-     window.myLine = new Chart(ctx, config);
+      var ctx = document.getElementById('dynamicChart').getContext('2d');
+      window.myLine = new Chart(ctx, config_bmi);
     };
 
+    //Handle adding new data to Dynamic chart
     document.getElementById('addData').addEventListener('click', function() {
-        if (config.data.datasets.length > 0) {
-            var month = MONTHS[config.data.labels.length % MONTHS.length];
-            config.data.labels.push(month);
+        //For every dataset on the Dynamic chart
+        if (config_bmi.data.datasets.length > 0) {
+            //Append x-val (date)
+            var date = new Date().toISOString().slice(0, 10);
+            config_bmi.data.labels.push(date);
 
-            config.data.datasets.forEach(function(dataset) {
-                dataset.data.push(1);
+            //Get and append y-val
+            var val_to_append = 3;
+            config_bmi.data.datasets.forEach(function(dataset) {
+                dataset.data.push(val_to_append);
             });
 
+            //Update BMI graph
             window.myLine.update();
         }
     });
