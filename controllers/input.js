@@ -60,7 +60,7 @@ async function postHealth(req, res) {
     await appendCSV(fromHeight, fromWeight, date) //finishing writing to CSV before changing page
     .then(() => {
         req.flash('success', {msg: 'Health data logged! Here are your results.'});
-        return res.redirect('/input');
+        return res.redirect('/more_graphs');
     })
     .catch((err) => {
         req.flash('error', {msg: 'Could not append to csv: ' + err});

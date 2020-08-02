@@ -2,8 +2,10 @@ extends layout
 
 block content
   .page-header
-    h3 Chart.js
-    button#addData Add Data
+    h3 Your Health
+    button#addData Add Manual BMI 
+    div
+      input#inputBMI(type='text' placeholder='Log your own BMI')
 
   canvas#csvChart
 
@@ -27,8 +29,8 @@ block content
           datasets: [{
             label: 'Weight',
             yAxisID: 'Weight',
-            backgroundColor: 'rgb(255, 99, 132)',
-            borderColor: 'rgb(255, 99, 132)',
+            backgroundColor: 'rgb(100, 20, 132)',
+            borderColor: 'rgb(100, 20, 132)',
             data: data.y_weights,
             fill: false
           
@@ -125,11 +127,8 @@ block content
 
 
         const response = await fetch("/test_csvs/test2.csv"); //'root' (/) is public folder
-        
-        
-        
-        console.log('Should be done reading.');
         const data = await response.text();
+        console.log('Should be done reading.');
         console.log(data);
 
         const rows = data.split('\n').slice(1);
@@ -152,6 +151,8 @@ block content
         });
         return {x_vals, y_weights, y_heights};
     }
+
+    //----------------------------------------------------------------------------------------
 
     //Chart 2: Dynamic chart - i.e. can push data to it. No persistence on reload - no CSV.
     var config_bmi = {
@@ -206,7 +207,9 @@ block content
     };
 
     //Handle adding new data to Dynamic chart
-    document.getElementById('addData').addEventListener('click', function() {
+    document.getElementById('addData').addEventListener('click', addToDyn);
+    
+    function addToDyn() {
         //For every dataset on the Dynamic chart
         if (config_bmi.data.datasets.length > 0) {
             //Append x-val (date)
@@ -214,7 +217,7 @@ block content
             config_bmi.data.labels.push(date);
 
             //Get and append y-val
-            var val_to_append = 3;
+            var val_to_append = document.getElementById('inputBMI').value; //no error check
             config_bmi.data.datasets.forEach(function(dataset) {
                 dataset.data.push(val_to_append);
             });
@@ -222,7 +225,61 @@ block content
             //Update BMI graph
             window.myLine.update();
         }
+    }
+
+    //add 1 element to dynamic chart - using data from csv
+    //- function addToDynMod(data, xval) {
+    //-   //For every dataset on the Dynamic chart
+    //-   if (config_bmi.data.datasets.length > 0) {
+    //-       //Append x-val (date)
+    //-       var date = new Date().toISOString().slice(0, 10);
+    //-       config_bmi.data.labels.push(xval); //was date
+    //-       //Get and append y-val
+    //-       var val_to_append = data.y_weights/data.y_heights; //no error check
+    //-       config_bmi.data.datasets.forEach(function(dataset) {
+    //-           dataset.data.push(val_to_append);
+    //-       });
+
+    //-       //Update BMI graph
+    //-       window.myLine.update();
+    //-   }
+    //- }
+
+
+    csvToDynamic()
+    .then(() => {console.log('success');})
+    .catch((err) => {
+      console.log(err);
     });
+
+    //Push csv data to the dynamic chart, for experimenting.
+    async function csvToDynamic() {
+      const data = await getCSV();
+
+      //For every dataset on the Dynamic chart
+      if (config_bmi.data.datasets.length > 0) {
+          //Save x-val
+          var date = new Date().toISOString().slice(0, 10);
+          config_bmi.data.labels = data.x_vals; //was date
+          //Save y-val
+          var bmi_vals = new Array();
+          for (var i = 0; i < data.y_weights.length; i++) { //NO ERROR CHECKING.....
+            bmi_vals.push(data.y_weights[i]/data.y_heights[i]); //get BMI
+          }
+          //Set on the BMI graph
+          config_bmi.data.datasets.forEach(function(dataset) {
+              dataset.data = bmi_vals;
+          });
+
+          //Update BMI graph
+          window.myLine.update();
+      }
+
+      //this would've been element-wise pushing. slow.
+      //- data.x_vals.forEach(function(xval) {
+      //-   addToDynMod(data, xval);
+      //- });
+    }
 
 
   //- canvas#csvChart(width='400' height='400')
