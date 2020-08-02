@@ -317,7 +317,7 @@ block content
           //Save y-val
           var bmi_vals = new Array();
           for (var i = 0; i < data.y_weights.length; i++) { //NO ERROR CHECKING.....
-            bmi_vals.push(data.y_weights[i]/data.y_heights[i]); //get BMI
+            bmi_vals.push(data.y_weights[i]/((data.y_heights[i]/100)*(data.y_heights[i]/100))); //get BMI
           }
           //Set on the BMI graph
           config_bmi.data.datasets.forEach(function(dataset) {
