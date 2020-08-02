@@ -15,6 +15,7 @@ block content
 
     makeChart(); // Chart 1: Uses data from a CSV
     async function makeChart() {
+      console.log('should be getting csv values');
       const data = await getCSV(); //get CSV data first
       var ctx2 = document.getElementById('csvChart').getContext('2d');
       config_csv = {
@@ -89,9 +90,10 @@ block content
                   ticks: {
                       callback: function(value, index, values) {
                           return value + ' cm';
-                      },
-                      max: 300,
-                      min: 10
+                      }
+                      //- },
+                      //- max: 300,
+                      //- min: 10
                   }
                   
               }],
@@ -119,7 +121,14 @@ block content
         const x_vals = [];
         const y_weights = [];
         const y_heights = [];
-        const response = await fetch("/test_csvs/base.csv"); //'root' (/) is public folder
+        console.log('Should be reading csv');
+
+
+        const response = await fetch("/test_csvs/test2.csv"); //'root' (/) is public folder
+        
+        
+        
+        console.log('Should be done reading.');
         const data = await response.text();
         console.log(data);
 

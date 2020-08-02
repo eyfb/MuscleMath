@@ -34,7 +34,7 @@ exports.callPython = (req, res) => {
  * POST /input
  * Send health data to server.a
  */
-exports.postHealth = (req, res) => {
+async function postHealth(req, res) {
     const validationErrors = [];
     let fromWeight;
     let fromHeight;
@@ -55,21 +55,34 @@ exports.postHealth = (req, res) => {
     fromWeight = req.body.weight;
     fromHeight = req.body.height;
     const date = new Date().toISOString().slice(0, 10);
-    console.log(date + ' ' + fromWeight + ' ' + fromHeight);
+    console.log('User entered: ' + date + ' ' + fromWeight + ' ' + fromHeight);
 
+    await appendCSV(fromHeight, fromWeight, date) //finishing writing to CSV before changing page
+    .then(() => {
+        req.flash('success', {msg: 'Health data logged! Here are your results.'});
+        return res.redirect('/input');
+    })
+    .catch((err) => {
+        req.flash('error', {msg: 'Could not append to csv: ' + err});
+    });
+
+};
+
+module.exports.postHealth = postHealth;
+
+async function appendCSV(fromHeight, fromWeight, date) {
     //Append to csv in /public/test_csvs/test2.csv
     var fs = require('fs');
     var csvWriter = require('csv-write-stream');
 
     //Note: this currently just overwrites the existing csv data..
-    var writer = csvWriter();
-    writer.pipe(fs.createWriteStream('./public/test_csvs/test2.csv'));
+    var writer = csvWriter({sendHeaders: false});
+    writer.pipe(fs.createWriteStream('./public/test_csvs/test2.csv', {flags: 'a'}));
     // writer.write({id: "world", date: "bar", weight: "taco", height: "", bmi: fromWeight/fromHeight});
+
+    //The id is not used atm. Could be for userid
     writer.write({id: '0', date: date, weight: fromWeight, height: fromHeight, bmi: fromWeight/fromHeight});
     writer.end(); 
-
-
-    req.flash('success', {msg: 'Health data logged! Here are your results.'});
-    return res.redirect('/more_graphs');
-};
+    return;
+}
   
