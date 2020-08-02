@@ -52,7 +52,6 @@ async function gsrun(cl){ // got fro prev gsrun (client command)
 }  
 */
 
-
 const { google } = require("googleapis");
 const keys = require("./GoogleSheetsServiceCredentials.json");
 
@@ -65,7 +64,7 @@ const gsrun = async cl => {
 
   const opt = {
     spreadsheetId: "10jqx9YYm9hquoHYBwfIwvtpRSNnHPWzEQfyk4o_Df9Y",
-    range: "Sheet1!A1:B5"
+    range: "Sheet1!A2:B5"
   };
 
   const data = await gsapi.spreadsheets.values.get(opt);
@@ -81,14 +80,14 @@ const gsrun = async cl => {
       console.log(err);
       return;
     }
-
+2
     console.log("Connected");
   });
 
   const receivedData = await gsrun(client);
-
+console.log(receivedData.length);
   // you can use receivedData here later:
-  console.log(receivedData.);
+  console.log(receivedData);
 })();
 
 
